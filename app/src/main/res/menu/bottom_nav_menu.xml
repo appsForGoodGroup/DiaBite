@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Calendar"
-        android:icon="@drawable/baseline_calendar_month_24"
+    <item android:title="@string/calendar"
+        android:icon="@drawable/ic_notifications_black_24dp"
         android:id="@+id/calendar"/>
-    <item android:title="Ingredients"
-        android:icon="@drawable/baseline_add_circle_24"
+    <item android:title="@string/ingredients"
+        android:icon="@drawable/ic_home_black_24dp"
         android:id="@+id/ingredients"/>
-    <item android:title="Recipes"
+    <item android:title="@string/recipes"
         android:icon="@drawable/baseline_batch_prediction_24"
         android:id="@+id/recipes"/>
 </menu>

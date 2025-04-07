@@ -9,4 +9,10 @@
     <string name="recipe_fragment">Recipe Fragment</string>
     <string name="calendar_fragment">Calendar Fragment</string>
     <string name="ingredient_fragment">Ingredient Fragment</string>
+    <string name="calendar">Calendar</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="recipes">Recipes</string>
+    <string name="close">Close</string>
+    <string name="this_is_filler_text_i_ll_add_the_meals_later">This is filler text, i\'ll add the meals later</string>
+    <string name="meals">Meals</string>
 </resources>
