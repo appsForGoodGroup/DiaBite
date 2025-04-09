@@ -87,6 +87,7 @@ public class CalendarFragment extends Fragment {
         TextView titleTextView = popupView.findViewById(R.id.popupTitle);
         TextView mealsTextView = popupView.findViewById(R.id.popupMeals);
         Button closeButton = popupView.findViewById(R.id.closePopupButton);
+
         for (int i = 0; i <days.length; i++){
             Button dayButton = new Button(getContext());
             dayButton.setText(days[i]);
@@ -104,7 +105,7 @@ public class CalendarFragment extends Fragment {
             );
 
             popupWindow.setFocusable(true);
-            popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(142, 176, 226)));
             popupWindow.setOutsideTouchable(true);
 
             popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
