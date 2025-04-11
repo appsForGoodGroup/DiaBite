@@ -3,10 +3,6 @@ package com.example.myapplication;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,9 +12,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import api.ApiClient;
 import api.SpoonacularApi;
 import models.Recipe;
@@ -28,47 +26,57 @@ import retrofit2.Response;
 
 public class CalendarFragment extends Fragment {
 
-    private final String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    private final HashMap<String, String[]> mealPlan = new HashMap<>();
-    LinearLayout daysContainer;
+    private TextView tvMonthYear;
+    private LinearLayout daysContainer;
+    private LinearLayout recipesContainer;
+    private LinearLayout mealPopup;
+    private TextView popupDayTitle, popupMeals;
+
+    private Calendar currentCalendar;
+    private HashMap<String, String[]> savedRecipes = new HashMap<>();
+    private HashMap<String, String[]> mealPlan = new HashMap<>();
+
+    private final String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
+
+        // Initialize views
+        tvMonthYear = view.findViewById(R.id.tvMonthYear);
         daysContainer = view.findViewById(R.id.daysContainer);
+        recipesContainer = view.findViewById(R.id.recipesContainer);
+        mealPopup = view.findViewById(R.id.mealPopup);
+        popupDayTitle = view.findViewById(R.id.popupDayTitle);
+        popupMeals = view.findViewById(R.id.popupMeals);
+        Button closePopupButton = view.findViewById(R.id.closePopupButton);
+        Button btnPrevMonth = view.findViewById(R.id.btnPrevMonth);
+        Button btnNextMonth = view.findViewById(R.id.btnNextMonth);
 
-        for (String day : days) { //this will make the buttons
-            Button dayButton = new Button(getContext());
-            dayButton.setText(day);
-            dayButton.setAllCaps(false);
-            dayButton.setPadding(24, 16, 24, 16);
-            dayButton.setOnClickListener(v -> {
-                makePopUp(day, mealPlan.get(day), v);
-            });
-            daysContainer.addView(dayButton);
-        }
+        // Initialize calendar
+        currentCalendar = Calendar.getInstance();
 
-        getRecipeFromSpoonacular(45);
+        // Initialize data
+        initializeRecipeData();
+        getRecipeFromSpoonacular(45); // Fetch meals with sugar limit
+
+        // Setup UI
+        updateMonthYear();
+        setupDaysOfWeek();
+        setupRecipes();
+
+        btnPrevMonth.setOnClickListener(v -> navigateMonth(-1));
+        btnNextMonth.setOnClickListener(v -> navigateMonth(1));
+        closePopupButton.setOnClickListener(v -> mealPopup.setVisibility(View.GONE));
 
         return view;
     }
 
-    private void makePopUp(String title, String[] meals, View view) { //https://stackoverflow.com/questions/5944987/how-to-create-a-popup-window-popupwindow-in-android
-        View popupView = getLayoutInflater().inflate(R.layout.meal_plan, null);
-        TextView titleTextView = popupView.findViewById(R.id.popupTitle);
-        TextView mealsTextView = popupView.findViewById(R.id.popupMeals);
-        Button closeButton = popupView.findViewById(R.id.closePopupButton);
-
-        titleTextView.setText(title);
-        mealsTextView.setText("Breakfast: " + meals[0] + "\nLunch: " + meals[1] + "\nDinner: " + meals[2]);
-
-        PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        popupWindow.setFocusable(true);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(142, 176, 226)));
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-        closeButton.setOnClickListener(v -> popupWindow.dismiss());
+    private void initializeRecipeData() {
+        savedRecipes.put("Recipe 1", new String[]{"Ingredient A", "Ingredient B"});
+        savedRecipes.put("Recipe 2", new String[]{"Ingredient C", "Ingredient D"});
+        savedRecipes.put("Recipe 3", new String[]{"Ingredient E", "Ingredient F"});
+        savedRecipes.put("Recipe 4", new String[]{"Ingredient G", "Ingredient H"});
     }
 
     private void getRecipeFromSpoonacular(int maxSugar) {
@@ -77,28 +85,141 @@ public class CalendarFragment extends Fragment {
 
         for (String day : days) {
             Call<ArrayList<Recipe>> call = api.getRecipesBySugar(maxSugar, 10, apiKey);
-            call.enqueue(new Callback<ArrayList<Recipe>>() { //https://stackoverflow.com/questions/32431525/using-call-enqueue-function-in-retrofit
+            call.enqueue(new Callback<ArrayList<Recipe>>() {
                 @Override
                 public void onFailure(@NonNull Call<ArrayList<Recipe>> call, @NonNull Throwable t) {
                     Log.d("Debug", "Failed to get recipes");
-                } //This method was suggested by the ide, so i made it log an error statement
+                }
 
                 @Override
-                public void onResponse(@NonNull Call<ArrayList<Recipe>> call, @NonNull Response<ArrayList<Recipe>> response) { // this method gets the response from the api and then sets up the meal plan for each day
+                public void onResponse(@NonNull Call<ArrayList<Recipe>> call, @NonNull Response<ArrayList<Recipe>> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         ArrayList<Recipe> recipes = response.body();
-                        Collections.shuffle(recipes); //https://www.geeksforgeeks.org/collections-shuffle-method-in-java-with-examples/
+                        Collections.shuffle(recipes);
                         ArrayList<String> meals = new ArrayList<>();
                         for (int i = 0; i < 3 && i < recipes.size(); i++) {
                             meals.add(recipes.get(i).getTitle());
                         }
-                        mealPlan.put(day, meals.toArray(new String[meals.size()]));
-
+                        mealPlan.put(day, meals.toArray(new String[0]));
                     } else {
                         mealPlan.put(day, new String[]{"Error", "Error", "Error"});
                     }
                 }
             });
         }
+    }
+
+    private void navigateMonth(int months) {
+        currentCalendar.add(Calendar.MONTH, months);
+        updateCalendar();
+    }
+
+    private void updateCalendar() {
+        updateMonthYear();
+        setupDaysOfWeek();
+    }
+
+    private void updateMonthYear() {
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+        tvMonthYear.setText(monthFormat.format(currentCalendar.getTime()));
+    }
+
+    private void setupDaysOfWeek() {
+        daysContainer.removeAllViews();
+        Calendar tempCalendar = (Calendar) currentCalendar.clone();
+        tempCalendar.set(Calendar.DAY_OF_WEEK, tempCalendar.getFirstDayOfWeek());
+
+        for (int i = 0; i < 7; i++) {
+            Button dayButton = new Button(getContext());
+            String dayName = days[i];
+
+            styleDayButton(dayButton, dayName, tempCalendar);
+            daysContainer.addView(dayButton);
+            tempCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+    }
+
+    private void styleDayButton(Button button, String dayName, Calendar calendar) {
+        button.setText(dayName);
+        button.setAllCaps(false);
+        button.setPadding(32, 16, 32, 16);
+        button.setTextSize(14);
+        button.setTextColor(Color.BLACK);
+
+        if (isToday(calendar)) {
+            button.setBackgroundResource(R.drawable.today_button_bg);
+        } else {
+            button.setBackgroundResource(R.drawable.day_button_bg);
+        }
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(4, 0, 4, 0);
+        button.setLayoutParams(params);
+
+        button.setOnClickListener(v -> showMealsPopup(dayName, v));
+    }
+
+    private boolean isToday(Calendar calendar) {
+        Calendar today = Calendar.getInstance();
+        return calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
+                calendar.get(Calendar.MONTH) == today.get(Calendar.MONTH) &&
+                calendar.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH);
+    }
+
+    private void setupRecipes() {
+        recipesContainer.removeAllViews();
+
+        for (String recipeName : savedRecipes.keySet()) {
+            TextView recipeView = new TextView(getContext());
+            recipeView.setText(recipeName);
+            recipeView.setTextSize(16);
+            recipeView.setPadding(16, 12, 16, 12);
+
+            recipeView.setOnClickListener(v -> {
+                String[] ingredients = savedRecipes.get(recipeName);
+                showIngredientsPopup(recipeName, ingredients);
+            });
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(0, 0, 0, 8);
+            recipeView.setLayoutParams(params);
+
+            recipesContainer.addView(recipeView);
+        }
+    }
+
+    private void showMealsPopup(String dayName, View view) {
+        String[] meals = mealPlan.get(dayName);
+        if (meals == null) {
+            meals = new String[]{"Loading...", "Loading...", "Loading..."};
+        }
+
+        View popupView = getLayoutInflater().inflate(R.layout.meal_plan, null);
+        TextView titleTextView = popupView.findViewById(R.id.popupTitle);
+        TextView mealsTextView = popupView.findViewById(R.id.popupMeals);
+        Button closeButton = popupView.findViewById(R.id.closePopupButton);
+
+        titleTextView.setText(dayName + "day's Meals");
+        mealsTextView.setText("Breakfast: " + meals[0] + "\nLunch: " + meals[1] + "\nDinner: " + meals[2]);
+
+        PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.setFocusable(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(142, 176, 226)));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 300);
+
+        closeButton.setOnClickListener(v -> popupWindow.dismiss());
+    }
+
+    private void showIngredientsPopup(String recipeName, String[] ingredients) {
+        popupDayTitle.setText(recipeName + " Ingredients");
+        popupMeals.setText(String.join("\n", ingredients));
+        mealPopup.setVisibility(View.VISIBLE);
     }
 }
