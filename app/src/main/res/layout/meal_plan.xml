@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
-    android:radius="25dp"
-    android:gravity="center">
+    android:radius="25dp">
 
     <TextView
         android:id="@+id/popupTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
         android:text="Meals"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingBottom="8dp" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/popupMeals"
@@ -27,6 +27,6 @@
         android:id="@+id/closePopupButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Close"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="12dp"
+        android:text="Close" />
 </LinearLayout>

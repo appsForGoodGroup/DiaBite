@@ -3,9 +3,11 @@ package com.example.myapplication;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
+import android.os.Handler;
+import android.os.Looper;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,107 +16,89 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import api.ApiClient;
+import api.SpoonacularApi;
+import models.Recipe;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class CalendarFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    private HashMap<String, String[]> mealPlan = new HashMap<String, String[]>() {{
-        put("Monday", new String[]{"meal 1", "meal 2", "meal 3"});
-        put("Tuesday", new String[]{"Meal 4", "Meal 5", "Meal 6"});
-        put("Wednesday", new String[]{"meal 7", "meal 8", "meal 9"});
-        put("Thursday", new String[]{"meal 12", "meal 11", "meal 10"});
-        put("Friday", new String[]{"meal 13", "meal 14", "meal 15"});
-        put("Saturday", new String[]{"meal 18", "meal 17", "meal 16"});
-        put("Sunday", new String[]{"meal 19", "meal 20", "meal 21"});
-    }};
-
+    private final String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private final HashMap<String, String[]> mealPlan = new HashMap<>();
     LinearLayout daysContainer;
 
-    public CalendarFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CalendarFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CalendarFragment newInstance(String param1, String param2) {
-        CalendarFragment fragment = new CalendarFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
         daysContainer = view.findViewById(R.id.daysContainer);
+
+        for (String day : days) { //this will make the buttons
+            Button dayButton = new Button(getContext());
+            dayButton.setText(day);
+            dayButton.setAllCaps(false);
+            dayButton.setPadding(24, 16, 24, 16);
+            dayButton.setOnClickListener(v -> {
+                makePopUp(day, mealPlan.get(day), v);
+            });
+            daysContainer.addView(dayButton);
+        }
+
+        getRecipeFromSpoonacular(45);
+
+        return view;
+    }
+
+    private void makePopUp(String title, String[] meals, View view) { //https://stackoverflow.com/questions/5944987/how-to-create-a-popup-window-popupwindow-in-android
         View popupView = getLayoutInflater().inflate(R.layout.meal_plan, null);
         TextView titleTextView = popupView.findViewById(R.id.popupTitle);
         TextView mealsTextView = popupView.findViewById(R.id.popupMeals);
         Button closeButton = popupView.findViewById(R.id.closePopupButton);
 
-        for (int i = 0; i <days.length; i++){
-            Button dayButton = new Button(getContext());
-            dayButton.setText(days[i]);
-            dayButton.setAllCaps(false);
-            dayButton.setPadding(24, 16, 24, 16);
-            String[] meals = mealPlan.get(days[i]);
-            dayButton.setOnClickListener(v -> {
-            String message = "Breakfast: " + meals[0] + "\n" + "Lunch: " + meals[1] + "\n" + "Dinner: " + meals[2];
-            mealsTextView.setText(message);
+        titleTextView.setText(title);
+        mealsTextView.setText("Breakfast: " + meals[0] + "\nLunch: " + meals[1] + "\nDinner: " + meals[2]);
 
-            PopupWindow popupWindow = new PopupWindow(
-                    popupView,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
+        PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.setFocusable(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(142, 176, 226)));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-            popupWindow.setFocusable(true);
-            popupWindow.setBackgroundDrawable(new ColorDrawable(Color.rgb(142, 176, 226)));
-            popupWindow.setOutsideTouchable(true);
+        closeButton.setOnClickListener(v -> popupWindow.dismiss());
+    }
 
-            popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+    private void getRecipeFromSpoonacular(int maxSugar) {
+        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
+        SpoonacularApi api = ApiClient.getApi();
 
-            closeButton.setOnClickListener(view1 -> popupWindow.dismiss());
-        });
+        for (String day : days) {
+            Call<ArrayList<Recipe>> call = api.getRecipesBySugar(maxSugar, 10, apiKey);
+            call.enqueue(new Callback<ArrayList<Recipe>>() { //https://stackoverflow.com/questions/32431525/using-call-enqueue-function-in-retrofit
+                @Override
+                public void onFailure(@NonNull Call<ArrayList<Recipe>> call, @NonNull Throwable t) {
+                    Log.d("Debug", "Failed to get recipes");
+                } //This method was suggested by the ide, so i made it log an error statement
 
-            daysContainer.addView(dayButton);
+                @Override
+                public void onResponse(@NonNull Call<ArrayList<Recipe>> call, @NonNull Response<ArrayList<Recipe>> response) { // this method gets the response from the api and then sets up the meal plan for each day
+                    if (response.isSuccessful() && response.body() != null) {
+                        ArrayList<Recipe> recipes = response.body();
+                        Collections.shuffle(recipes); //https://www.geeksforgeeks.org/collections-shuffle-method-in-java-with-examples/
+                        ArrayList<String> meals = new ArrayList<>();
+                        for (int i = 0; i < 3 && i < recipes.size(); i++) {
+                            meals.add(recipes.get(i).getTitle());
+                        }
+                        mealPlan.put(day, meals.toArray(new String[meals.size()]));
+
+                    } else {
+                        mealPlan.put(day, new String[]{"Error", "Error", "Error"});
+                    }
+                }
+            });
         }
-        return view;
     }
 }
