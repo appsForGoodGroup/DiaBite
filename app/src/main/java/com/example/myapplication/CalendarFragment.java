@@ -222,9 +222,14 @@ public class CalendarFragment extends Fragment {
 
         //https://developer.android.com/guide/fragments/transactions
         //note to future self, ask mrs Taricco how to update the nav bar
+        String[] finalMeals = meals;
         mealsTextView.setOnClickListener(v->{
-            getParentFragmentManager().beginTransaction().replace(R.id.frame_layout, new RecipeFragment()).commit();
+            RecipeFragment recipeFragment = new RecipeFragment();
+
+            View recipeView = getLayoutInflater().inflate(R.layout.fragment_recipe, null);
+            getParentFragmentManager().beginTransaction().replace(R.id.frame_layout, recipeFragment).commit();
             popupWindow.dismiss();
+            RecipeFragment.setMeals(finalMeals);
         });
     }
 

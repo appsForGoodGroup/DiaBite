@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +24,8 @@ public class RecipeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private static String[] meals;
 
     public RecipeFragment() {
         // Required empty public constructor
@@ -59,6 +62,22 @@ public class RecipeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recipe, container, false);
+        View view = inflater.inflate(R.layout.fragment_recipe, container, false);
+        TextView breakfastTag = view.findViewById(R.id.breakfast);
+        TextView lunchTag = view.findViewById(R.id.lunch);
+        TextView dinnerTag = view.findViewById(R.id.dinner);
+
+        breakfastTag.setText("Breakfast: " + meals[0]);
+        lunchTag.setText("Lunch: " + meals[1]);
+        dinnerTag.setText("Dinner: " + meals[2]);
+        return view;
+    }
+
+    /**
+     * This setter sets the meals array to a given array
+     * @param mealsOfTheDay the array of meals that will be made today.
+     */
+    public static void setMeals(String[] mealsOfTheDay){
+        meals = mealsOfTheDay;
     }
 }
