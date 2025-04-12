@@ -83,6 +83,10 @@ public class CalendarFragment extends Fragment {
         savedRecipes.put("Recipe 4", new String[]{"Ingredient G", "Ingredient H"});
     }
 
+    /**
+     * This requests a recipe from spoonacular using a maximum sugar.
+     * @param maxSugar The maximum sugar a person wants in their meal
+     */
     private void getRecipeFromSpoonacular(int maxSugar) {
         String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
         SpoonacularApi api = ApiClient.getApi();
@@ -113,21 +117,34 @@ public class CalendarFragment extends Fragment {
         }
     }
 
+    /**
+     * This allows you to navigate to a different month
+     * @param months the month that will be navigated to
+     */
     private void navigateMonth(int months) {
         currentCalendar.add(Calendar.MONTH, months);
         updateCalendar();
     }
 
+    /**
+     * This updates the month and the week
+     */
     private void updateCalendar() {
         updateMonthYear();
         setupDaysOfWeek();
     }
 
+    /**
+     * This updates the month
+     */
     private void updateMonthYear() {
         SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
         tvMonthYear.setText(monthFormat.format(currentCalendar.getTime()));
     }
 
+    /**
+     * This adds a button to the container
+     */
     private void setupDaysOfWeek() {
         daysContainer.removeAllViews();
         Calendar tempCalendar = (Calendar) currentCalendar.clone();
@@ -143,6 +160,9 @@ public class CalendarFragment extends Fragment {
         }
     }
 
+    /**
+     * This styles the container of the days button.
+     */
     private void styleDayButton(Button button, String dayName, Calendar calendar) {
         button.setText(dayName);
         button.setAllCaps(false);
@@ -166,6 +186,11 @@ public class CalendarFragment extends Fragment {
         button.setOnClickListener(v -> showMealsPopup(dayName, v));
     }
 
+    /**
+     * This checks to see if a button contains the same day at today
+     * @param calendar The calendar the user is on
+     * @return if this calendar contains the day we are on
+     */
     private boolean isToday(Calendar calendar) {
         Calendar today = Calendar.getInstance();
         return calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
@@ -173,6 +198,9 @@ public class CalendarFragment extends Fragment {
                 calendar.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH);
     }
 
+    /**
+     * This sets up saved recipes for the future
+     */
     private void setupRecipes() {
         recipesContainer.removeAllViews();
 
@@ -198,6 +226,11 @@ public class CalendarFragment extends Fragment {
         }
     }
 
+    /**
+     * This makes a meals pop up with 3 meals per day
+     * @param dayName this takes in the name of the day the user clicked on
+     * @param view this is the view that triggered the pop up
+     */
     private void showMealsPopup(String dayName, View view) { //https://stackoverflow.com/questions/5944987/how-to-create-a-popup-window-popupwindow-in-android
         String[] meals = mealPlan.get(dayName);
         if (meals == null) {
