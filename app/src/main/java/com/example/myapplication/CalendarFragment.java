@@ -58,7 +58,7 @@ public class CalendarFragment extends Fragment {
 
         // Initialize data
         initializeRecipeData();
-        getRecipeFromSpoonacular(45); // Fetch meals with sugar limit
+        getRecipeFromSpoonacular(45); //this will get recipes using a max sugar, currently it's 45
 
         // Setup UI
         updateMonthYear();
@@ -85,7 +85,7 @@ public class CalendarFragment extends Fragment {
 
         for (String day : days) {
             Call<ArrayList<Recipe>> call = api.getRecipesBySugar(maxSugar, 10, apiKey);
-            call.enqueue(new Callback<ArrayList<Recipe>>() {
+            call.enqueue(new Callback<ArrayList<Recipe>>() { //https://stackoverflow.com/questions/32431525/using-call-enqueue-function-in-retrofit
                 @Override
                 public void onFailure(@NonNull Call<ArrayList<Recipe>> call, @NonNull Throwable t) {
                     Log.d("Debug", "Failed to get recipes");
@@ -95,7 +95,7 @@ public class CalendarFragment extends Fragment {
                 public void onResponse(@NonNull Call<ArrayList<Recipe>> call, @NonNull Response<ArrayList<Recipe>> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         ArrayList<Recipe> recipes = response.body();
-                        Collections.shuffle(recipes);
+                        Collections.shuffle(recipes); //https://www.geeksforgeeks.org/collections-shuffle-method-in-java-with-examples/
                         ArrayList<String> meals = new ArrayList<>();
                         for (int i = 0; i < 3 && i < recipes.size(); i++) {
                             meals.add(recipes.get(i).getTitle());
@@ -194,7 +194,7 @@ public class CalendarFragment extends Fragment {
         }
     }
 
-    private void showMealsPopup(String dayName, View view) {
+    private void showMealsPopup(String dayName, View view) { //https://stackoverflow.com/questions/5944987/how-to-create-a-popup-window-popupwindow-in-android
         String[] meals = mealPlan.get(dayName);
         if (meals == null) {
             meals = new String[]{"Loading...", "Loading...", "Loading..."};
