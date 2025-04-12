@@ -38,6 +38,10 @@ public class CalendarFragment extends Fragment {
 
     private final String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
+    public CalendarFragment(){
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
@@ -215,6 +219,13 @@ public class CalendarFragment extends Fragment {
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 300);
 
         closeButton.setOnClickListener(v -> popupWindow.dismiss());
+
+        //https://developer.android.com/guide/fragments/transactions
+        //note to future self, ask mrs Taricco how to update the nav bar
+        mealsTextView.setOnClickListener(v->{
+            getParentFragmentManager().beginTransaction().replace(R.id.frame_layout, new RecipeFragment()).commit();
+            popupWindow.dismiss();
+        });
     }
 
     private void showIngredientsPopup(String recipeName, String[] ingredients) {
