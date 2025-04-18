@@ -99,7 +99,7 @@ public class CalendarFragment extends Fragment {
             Log.d("Debug", "Meal plan already loaded. Skipping API call.");
             return;
         }
-        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
+        String apiKey = "1180357e69a34e54b905d57dae60db01";
         SpoonacularApi api = ApiClient.getApi();
 
         for (String day : days) {
@@ -271,12 +271,12 @@ public class CalendarFragment extends Fragment {
         //note to future self, ask mrs Taricco how to update the nav bar
         String[] finalMeals = meals;
         mealsTextView.setOnClickListener(v->{
+            RecipeFragment.setMeals(finalMeals);
             RecipeFragment recipeFragment = new RecipeFragment();
 
             View recipeView = getLayoutInflater().inflate(R.layout.fragment_recipe, null);
             getParentFragmentManager().beginTransaction().replace(R.id.frame_layout, recipeFragment).commit();
             popupWindow.dismiss();
-            RecipeFragment.setMeals(finalMeals);
         });
     }
 
