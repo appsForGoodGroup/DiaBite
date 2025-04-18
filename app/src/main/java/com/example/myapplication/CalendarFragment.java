@@ -83,6 +83,13 @@ public class CalendarFragment extends Fragment {
         savedRecipes.put("Recipe 4", new String[]{"Ingredient G", "Ingredient H"});
     }
 
+    private String getTodayDayName() {
+        Calendar today = Calendar.getInstance();
+        int dayOfWeek = today.get(Calendar.DAY_OF_WEEK); // 1 (Sun) to 7 (Sat)
+        return days[dayOfWeek - 1];
+    }
+
+
     /**
      * This requests a recipe from spoonacular using a maximum sugar.
      * @param maxSugar The maximum sugar a person wants in their meal
@@ -109,6 +116,9 @@ public class CalendarFragment extends Fragment {
                             meals.add(recipes.get(i).getTitle());
                         }
                         mealPlan.put(day, meals.toArray(new String[0]));
+                        if (day.equals(getTodayDayName())) {
+                            RecipeFragment.setMeals(meals.toArray(new String[0]));
+                        }
                     } else {
                         mealPlan.put(day, new String[]{"Error", "Error", "Error"});
                     }

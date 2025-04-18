@@ -13,6 +13,6 @@
     <string name="ingredients">Ingredients</string>
     <string name="recipes">Recipes</string>
     <string name="close">Close</string>
-    <string name="this_is_filler_text_i_ll_add_the_meals_later">This is filler text, i\'ll add the meals later</string>
+    <string name="Instructions">This is filler text.</string>
     <string name="meals">Meals</string>
 </resources>
