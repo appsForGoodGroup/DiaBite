@@ -34,7 +34,7 @@ public class CalendarFragment extends Fragment {
 
     private Calendar currentCalendar;
     private HashMap<String, String[]> savedRecipes = new HashMap<>();
-    private HashMap<String, String[]> mealPlan = new HashMap<>();
+    private static final HashMap<String, String[]> mealPlan = new HashMap<>();
 
     private final String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
@@ -95,6 +95,10 @@ public class CalendarFragment extends Fragment {
      * @param maxSugar The maximum sugar a person wants in their meal
      */
     private void getRecipeFromSpoonacular(int maxSugar) {
+        if (!mealPlan.isEmpty()) {
+            Log.d("Debug", "Meal plan already loaded. Skipping API call.");
+            return;
+        }
         String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
         SpoonacularApi api = ApiClient.getApi();
 
