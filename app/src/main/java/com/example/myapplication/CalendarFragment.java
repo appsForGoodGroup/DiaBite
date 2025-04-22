@@ -23,6 +23,8 @@ import models.Recipe;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 
 public class CalendarFragment extends Fragment {
 
@@ -268,14 +270,14 @@ public class CalendarFragment extends Fragment {
         closeButton.setOnClickListener(v -> popupWindow.dismiss());
 
         //https://developer.android.com/guide/fragments/transactions
-        //note to future self, ask mrs Taricco how to update the nav bar
         String[] finalMeals = meals;
         mealsTextView.setOnClickListener(v->{
             RecipeFragment.setMeals(finalMeals);
-            RecipeFragment recipeFragment = new RecipeFragment();
+            if (getActivity() != null) {
+                BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
+                navBar.setSelectedItemId(R.id.recipes);
+            }
 
-            View recipeView = getLayoutInflater().inflate(R.layout.fragment_recipe, null);
-            getParentFragmentManager().beginTransaction().replace(R.id.frame_layout, recipeFragment).commit();
             popupWindow.dismiss();
         });
     }

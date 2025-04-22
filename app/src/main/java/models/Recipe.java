@@ -13,6 +13,11 @@ public class Recipe {
     @SerializedName("image")
     private String imageUrl;
 
+    @SerializedName("ingredients")
+    private String ingredients;
+
+    
+
     public String getTitle() {
         return title;
     }
