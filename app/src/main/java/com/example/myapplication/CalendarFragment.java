@@ -257,8 +257,19 @@ public class CalendarFragment extends Fragment {
         TextView titleTextView = popupView.findViewById(R.id.popupTitle);
         TextView mealsTextView = popupView.findViewById(R.id.popupMeals);
         Button closeButton = popupView.findViewById(R.id.closePopupButton);
-
-        titleTextView.setText(dayName + "day's Meals");
+        String title;
+        if(dayName.equals("Wed")){
+            title = "Wednesday's Meals";
+        } else if (dayName.equals("Thu")){
+            title = "Thursday's Meals";
+        } else if (dayName.equals("Sat")){
+            title = "Saturday's Meals";
+        }else if (dayName.equals("Tue")){
+            title = "Tuesday's Meals";
+        }else{
+            title = dayName + "day's Meals";
+        }
+        titleTextView.setText(title);
         mealsTextView.setText("Breakfast: " + meals[0] + "\nLunch: " + meals[1] + "\nDinner: " + meals[2]);
 
         PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
