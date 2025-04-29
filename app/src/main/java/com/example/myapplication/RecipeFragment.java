@@ -4,10 +4,24 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
+import api.ApiClient;
+import api.SpoonacularApi;
+import models.Recipe;
+import models.RecipeDetail;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,8 +38,13 @@ public class RecipeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private TextView breakfastTag, lunchTag, dinnerTag;
 
+    private static int[] ids;
     private static String[] meals;
+    ArrayList<String> meal1 = new ArrayList<>();
+    ArrayList<String> meal2 = new ArrayList<>();
+    ArrayList<String> meal3 = new ArrayList<>();
 
     public RecipeFragment() {
         // Required empty public constructor
@@ -49,6 +68,47 @@ public class RecipeFragment extends Fragment {
         return fragment;
     }
 
+    private void getRecipeDetails(int id, CallbackFunction callback) {
+        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
+        SpoonacularApi api = ApiClient.getApi();
+        Call<RecipeDetail> call = api.getRecipeInformation(id, apiKey);
+        call.enqueue(new Callback<RecipeDetail>() {
+            @Override
+            public void onFailure(@NonNull Call<RecipeDetail> call, @NonNull Throwable t) {
+                Log.d("Debug", "Failed to get recipe details: " + t.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call<RecipeDetail> call, @NonNull Response<RecipeDetail> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    RecipeDetail details = response.body();
+                    ArrayList<String> info = new ArrayList<>();
+                    info.add(details.getTitle());
+                    info.add(details.getInstructions());
+                    callback.onCallback(info);
+
+                    if (call.request().url().toString().contains(String.valueOf(ids[0]))) {
+                        meal1 = info;
+                        if (breakfastTag != null) {
+                            breakfastTag.setText("Breakfast: " + meals[0] + "\n" + meal1.get(0) + "\n" + meal1.get(1));
+                        }
+                    } else if (call.request().url().toString().contains(String.valueOf(ids[1]))) {
+                        meal2 = info;
+                        if (lunchTag != null) {
+                            lunchTag.setText("Lunch: " + meals[1] + "\n" + meal2.get(0) + "\n" + meal2.get(1));
+                        }
+                    } else if (call.request().url().toString().contains(String.valueOf(ids[2]))) {
+                        meal3 = info;
+                        if (dinnerTag != null) {
+                            dinnerTag.setText("Dinner: " + meals[2] + "\n" + meal3.get(0) + "\n" + meal3.get(1));
+                        }
+                    }
+                }
+            }
+
+        });
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,22 +116,33 @@ public class RecipeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        if (ids != null && ids.length >= 3) {
+            getRecipeDetails(ids[0], result -> meal1 = result);
+            getRecipeDetails(ids[1], result -> meal2 = result);
+            getRecipeDetails(ids[2], result -> meal3 = result);
+        }
+        else {
+            Log.e("RecipeFragment", "IDs are not set yet!");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recipe, container, false);
-        TextView breakfastTag = view.findViewById(R.id.breakfast);
-        TextView lunchTag = view.findViewById(R.id.lunch);
-        TextView dinnerTag = view.findViewById(R.id.dinner);
 
-        breakfastTag.setText("Breakfast: " + meals[0]);
-        lunchTag.setText("Lunch: " + meals[1]);
-        dinnerTag.setText("Dinner: " + meals[2]);
+        breakfastTag = view.findViewById(R.id.breakfast);
+        lunchTag = view.findViewById(R.id.lunch);
+        dinnerTag = view.findViewById(R.id.dinner);
+
+        breakfastTag.setText("Loading breakfast...");
+        lunchTag.setText("Loading lunch...");
+        dinnerTag.setText("Loading dinner...");
+
         return view;
     }
+
+
 
     /**
      * This setter sets the meals array to a given array
@@ -79,5 +150,9 @@ public class RecipeFragment extends Fragment {
      */
     public static void setMeals(String[] mealsOfTheDay){
         meals = mealsOfTheDay;
+    }
+
+    public static void setIDs(int[] iDsOfMeals){
+        ids = iDsOfMeals;
     }
 }

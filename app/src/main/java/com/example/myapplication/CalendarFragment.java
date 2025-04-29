@@ -37,6 +37,7 @@ public class CalendarFragment extends Fragment {
     private Calendar currentCalendar;
     private HashMap<String, String[]> savedRecipes = new HashMap<>();
     private static final HashMap<String, String[]> mealPlan = new HashMap<>();
+    private static final HashMap<String, int[]> mealPlanIDs= new HashMap<>();
 
     private final String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
@@ -118,12 +119,16 @@ public class CalendarFragment extends Fragment {
                         ArrayList<Recipe> recipes = response.body();
                         Collections.shuffle(recipes); //https://www.geeksforgeeks.org/collections-shuffle-method-in-java-with-examples/
                         ArrayList<String> meals = new ArrayList<>();
+                        ArrayList<Integer> mealIDs = new ArrayList<Integer>();
                         for (int i = 0; i < 3 && i < recipes.size(); i++) {
                             meals.add(recipes.get(i).getTitle());
+                            mealIDs.add(recipes.get(i).getID());
                         }
                         mealPlan.put(day, meals.toArray(new String[0]));
                         if (day.equals(getTodayDayName())) {
-                            RecipeFragment.setMeals(meals.toArray(new String[0]));
+                            mealPlan.put(day, meals.toArray(new String[0]));
+                            mealPlanIDs.put(day, mealIDs.stream().mapToInt(Integer::intValue).toArray());
+
                         }
                     } else {
                         mealPlan.put(day, new String[]{"Error", "Error", "Error"});
@@ -249,6 +254,7 @@ public class CalendarFragment extends Fragment {
      */
     private void showMealsPopup(String dayName, View view) { //https://stackoverflow.com/questions/5944987/how-to-create-a-popup-window-popupwindow-in-android
         String[] meals = mealPlan.get(dayName);
+        int[] ids = mealPlanIDs.get(dayName);
         if (meals == null) {
             meals = new String[]{"Loading...", "Loading...", "Loading..."};
         }
@@ -282,8 +288,10 @@ public class CalendarFragment extends Fragment {
 
         //https://developer.android.com/guide/fragments/transactions
         String[] finalMeals = meals;
-        mealsTextView.setOnClickListener(v->{
+        int[] finalIds = ids;
+        mealsTextView.setOnClickListener(v -> {
             RecipeFragment.setMeals(finalMeals);
+            RecipeFragment.setIDs(finalIds);
             if (getActivity() != null) {
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
                 navBar.setSelectedItemId(R.id.recipes);

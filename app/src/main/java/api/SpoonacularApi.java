@@ -1,8 +1,9 @@
 package api;
 import models.Recipe;
-import models.SearchResult;
+import models.RecipeDetail;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 import java.util.ArrayList;
@@ -25,18 +26,11 @@ public interface SpoonacularApi {
     );
 
 
-    /**
-     * This will use searching by name
-     * @param query - this is the recipe that the user wants to search
-     * @param number this is the number of recipes in the request
-     * @param apiKey - this is the api key for spoonacular
-     * @return
-     */
-    @GET("recipes/complexSearch")
-    Call<SearchResult> searchRecipes(
-            @Query("apiKey") String apiKey,
-            @Query("query") String query,
-            @Query("number") int number
+    @GET("recipes/{id}/information")
+    Call<RecipeDetail> getRecipeInformation(
+            @Path("id") int id,
+            @Query("apiKey") String apiKey
     );
+
 
 }

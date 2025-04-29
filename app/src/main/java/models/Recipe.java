@@ -21,5 +21,8 @@ public class Recipe {
     public String getTitle() {
         return title;
     }
+    public int getID() {
+        return id;
+    }
 }
 
