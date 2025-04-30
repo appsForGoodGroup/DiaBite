@@ -125,6 +125,7 @@ public class CalendarFragment extends Fragment {
                             mealIDs.add(recipes.get(i).getID());
                         }
                         mealPlan.put(day, meals.toArray(new String[0]));
+                        mealPlanIDs.put(day, mealIDs.stream().mapToInt(Integer::intValue).toArray());
                         if (day.equals(getTodayDayName())) {
                             mealPlan.put(day, meals.toArray(new String[0]));
                             mealPlanIDs.put(day, mealIDs.stream().mapToInt(Integer::intValue).toArray());
