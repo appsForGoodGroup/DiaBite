@@ -85,22 +85,23 @@ public class RecipeFragment extends Fragment {
                     ArrayList<String> info = new ArrayList<>();
                     info.add(details.getTitle());
                     info.add(details.getInstructions());
+                    info.add(details.getIngredients());
                     callback.onCallback(info);
 
                     if (call.request().url().toString().contains(String.valueOf(ids[0]))) {
                         meal1 = info;
                         if (breakfastTag != null) {
-                            breakfastTag.setText("Breakfast: " + meals[0] + "\n" + meal1.get(0) + "\n" + meal1.get(1));
+                            breakfastTag.setText("Breakfast: " + meals[0] + "\n" + meal1.get(0) + "\n" + meal1.get(1)+"\n"+meal1.get(2));
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[1]))) {
                         meal2 = info;
                         if (lunchTag != null) {
-                            lunchTag.setText("Lunch: " + meals[1] + "\n" + meal2.get(0) + "\n" + meal2.get(1));
+                            lunchTag.setText("Lunch: " + meals[1] + "\n" + meal2.get(0) + "\n" + meal2.get(1)+"\n"+meal2.get(2));
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[2]))) {
                         meal3 = info;
                         if (dinnerTag != null) {
-                            dinnerTag.setText("Dinner: " + meals[2] + "\n" + meal3.get(0) + "\n" + meal3.get(1));
+                            dinnerTag.setText("Dinner: " + meals[2] + "\n" + meal3.get(0) + "\n" + meal3.get(1)+"\n"+meal3.get(2));
                         }
                     }
                 }

@@ -25,6 +25,14 @@ public class RecipeDetail {
     public ArrayList<ExtendedIngredient> getExtendedIngredients() {
         return extendedIngredients;
     }
+    public String getIngredients(){
+        String listOfIngredients = "";
+        ArrayList<ExtendedIngredient> ingredients  = getExtendedIngredients();
+        for (int i=0; i<ingredients.size(); i++){
+            listOfIngredients += ingredients.get(i).getOriginal() +"\n";
+        }
+        return listOfIngredients;
+    }
 
 
 
