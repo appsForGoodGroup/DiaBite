@@ -288,10 +288,8 @@ public class CalendarFragment extends Fragment {
         closeButton.setOnClickListener(v -> popupWindow.dismiss());
 
         //https://developer.android.com/guide/fragments/transactions
-        String[] finalMeals = meals;
         int[] finalIds = ids;
         mealsTextView.setOnClickListener(v -> {
-            RecipeFragment.setMeals(finalMeals);
             RecipeFragment.setIDs(finalIds);
             if (getActivity() != null) {
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);

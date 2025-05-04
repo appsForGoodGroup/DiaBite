@@ -41,7 +41,7 @@ public class RecipeFragment extends Fragment {
     private TextView breakfastTag, lunchTag, dinnerTag;
 
     private static int[] ids;
-    private static String[] meals;
+
     ArrayList<String> meal1 = new ArrayList<>();
     ArrayList<String> meal2 = new ArrayList<>();
     ArrayList<String> meal3 = new ArrayList<>();
@@ -84,24 +84,24 @@ public class RecipeFragment extends Fragment {
                     RecipeDetail details = response.body();
                     ArrayList<String> info = new ArrayList<>();
                     info.add(details.getTitle());
-                    info.add(details.getInstructions());
                     info.add(details.getIngredients());
+                    info.add(details.getInstructions());
                     callback.onCallback(info);
 
                     if (call.request().url().toString().contains(String.valueOf(ids[0]))) {
                         meal1 = info;
                         if (breakfastTag != null) {
-                            breakfastTag.setText("Breakfast: " + meals[0] + "\n" + meal1.get(0) + "\n" + meal1.get(1)+"\n"+meal1.get(2));
+                            breakfastTag.setText("Breakfast: " + meal1.get(0) + "\n" + meal1.get(1)+"\n"+meal1.get(2));
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[1]))) {
                         meal2 = info;
                         if (lunchTag != null) {
-                            lunchTag.setText("Lunch: " + meals[1] + "\n" + meal2.get(0) + "\n" + meal2.get(1)+"\n"+meal2.get(2));
+                            lunchTag.setText("Lunch: " + meal2.get(0) + "\n" + meal2.get(1)+"\n"+meal2.get(2));
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[2]))) {
                         meal3 = info;
                         if (dinnerTag != null) {
-                            dinnerTag.setText("Dinner: " + meals[2] + "\n" + meal3.get(0) + "\n" + meal3.get(1)+"\n"+meal3.get(2));
+                            dinnerTag.setText("Dinner: " + meal3.get(0) + "\n" + meal3.get(1)+"\n"+meal3.get(2));
                         }
                     }
                 }
@@ -141,16 +141,6 @@ public class RecipeFragment extends Fragment {
         dinnerTag.setText("Loading dinner...");
 
         return view;
-    }
-
-
-
-    /**
-     * This setter sets the meals array to a given array
-     * @param mealsOfTheDay the array of meals that will be made today.
-     */
-    public static void setMeals(String[] mealsOfTheDay){
-        meals = mealsOfTheDay;
     }
 
     public static void setIDs(int[] iDsOfMeals){
