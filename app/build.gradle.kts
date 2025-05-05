@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
     implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation(libs.picasso)
     implementation(libs.okhttp)
     testImplementation(libs.junit)

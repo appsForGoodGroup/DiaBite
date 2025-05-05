@@ -1,12 +1,22 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 /**
@@ -18,6 +28,7 @@ public class IngredientsFragment extends Fragment {
 
     ListView listView;
     ArrayList<String> items;
+    FloatingActionButton fab;
     ArrayAdapter<String> adapter;
 
     private static final String ARG_PARAM1 = "param1";
@@ -25,6 +36,7 @@ public class IngredientsFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private IngredientsDatabaseHelper dbHelper;
 
     public IngredientsFragment() {
         // Required empty public constructor
@@ -59,18 +71,78 @@ public class IngredientsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        dbHelper = new IngredientsDatabaseHelper(requireContext());
+
         listView = view.findViewById(R.id.listview);
-        items = new ArrayList<>();
+        fab = view.findViewById(R.id.fab);
 
-        // Add your sample items
-        items.add("Apple");
-        items.add("Banana");
-        items.add("Orange");
-        items.add("Strawberry");
-        items.add("Kiwi");
-        items.add("Mango");
-
+        items = loadIngredientsFromDatabase();
         adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, items);
         listView.setAdapter(adapter);
+
+        fab.setOnClickListener(v -> showAddIngredientPopUp());
+
+        listView.setOnItemLongClickListener((adapterView, view1, position, id) -> {
+            String toRemove = items.get(position);
+            items.remove(position);
+            removeIngredientFromDatabase(toRemove);
+            adapter.notifyDataSetChanged();
+            return true;
+        });
     }
+
+    private void showAddIngredientPopUp() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Add Ingredient");
+
+        final EditText input = new EditText(requireContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String newIngredient = input.getText().toString().trim();
+            if (!newIngredient.isEmpty()) {
+                addIngredientToDatabase(newIngredient);
+                items.add(newIngredient);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    public void addIngredientToDatabase(String ingredient){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(IngredientsDatabaseHelper.COLUMN_NAME, ingredient);
+        db.insert(IngredientsDatabaseHelper.TABLE_INGREDIENTS, null, values);
+        db.close();
+    }
+
+    public void removeIngredientFromDatabase(String ingredient){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(IngredientsDatabaseHelper.TABLE_INGREDIENTS, "name = ?", new String[]{ingredient});
+        db.close();
+    }
+
+    private ArrayList<String> loadIngredientsFromDatabase() {
+        ArrayList<String> ingredients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(
+                IngredientsDatabaseHelper.TABLE_INGREDIENTS,
+                new String[]{IngredientsDatabaseHelper.COLUMN_NAME},
+                null, null, null, null, null
+        );
+
+        while (!cursor.isAfterLast()) {
+            ingredients.add(cursor.getString(0));
+        }
+
+        cursor.close();
+        db.close();
+        return ingredients;
+    }
+
 }
