@@ -102,7 +102,8 @@ public class CalendarFragment extends Fragment {
             Log.d("Debug", "Meal plan already loaded. Skipping API call.");
             return;
         }
-        String apiKey = "1180357e69a34e54b905d57dae60db01";
+        //String apiKey = "1180357e69a34e54b905d57dae60db01";
+        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
         SpoonacularApi api = ApiClient.getApi();
 
         for (String day : days) {

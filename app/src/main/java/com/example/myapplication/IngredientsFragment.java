@@ -136,7 +136,7 @@ public class IngredientsFragment extends Fragment {
                 null, null, null, null, null
         );
 
-        while (!cursor.isAfterLast()) {
+        while (cursor.moveToNext()) {
             ingredients.add(cursor.getString(0));
         }
 
