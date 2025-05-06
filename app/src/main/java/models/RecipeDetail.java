@@ -43,6 +43,15 @@ public class RecipeDetail {
         public String getOriginal() {
             return original;
         }
+        public String getName() {
+            // For example: "1 cup of flour" → "flour"
+            String original = this.getOriginal().toLowerCase();
+            original = original.replaceAll("[0-9/]+", "");       // Remove numbers
+            original = original.replaceAll("(cups?|tablespoons?|teaspoons?|tbsp|tsp|of)", ""); // Remove common units
+            original = original.replaceAll("[^a-z ]", "");        // Remove punctuation
+            return original.trim();
+        }
+
     }
 }
 

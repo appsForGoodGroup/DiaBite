@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import java.util.*;
 import api.ApiClient;
 import api.SpoonacularApi;
 import models.Recipe;
+import models.RecipeDetail;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -102,13 +105,15 @@ public class CalendarFragment extends Fragment {
             Log.d("Debug", "Meal plan already loaded. Skipping API call.");
             return;
         }
-        //String apiKey = "1180357e69a34e54b905d57dae60db01";
-        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
+
+        String apiKey = "1180357e69a34e54b905d57dae60db01";
         SpoonacularApi api = ApiClient.getApi();
+        HashSet<String> userIngredients = IngredientUtils.getUserIngredients(requireContext());
+        Log.d("Debug", "User Ingredients: " + userIngredients);
 
         for (String day : days) {
             Call<ArrayList<Recipe>> call = api.getRecipesBySugar(maxSugar, 10, apiKey);
-            call.enqueue(new Callback<ArrayList<Recipe>>() { //https://stackoverflow.com/questions/32431525/using-call-enqueue-function-in-retrofit
+            call.enqueue(new Callback<ArrayList<Recipe>>() {
                 @Override
                 public void onFailure(@NonNull Call<ArrayList<Recipe>> call, @NonNull Throwable t) {
                     Log.d("Debug", "Failed to get recipes");
@@ -118,27 +123,103 @@ public class CalendarFragment extends Fragment {
                 public void onResponse(@NonNull Call<ArrayList<Recipe>> call, @NonNull Response<ArrayList<Recipe>> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         ArrayList<Recipe> recipes = response.body();
-                        Collections.shuffle(recipes); //https://www.geeksforgeeks.org/collections-shuffle-method-in-java-with-examples/
-                        ArrayList<String> meals = new ArrayList<>();
-                        ArrayList<Integer> mealIDs = new ArrayList<Integer>();
-                        for (int i = 0; i < 3 && i < recipes.size(); i++) {
-                            meals.add(recipes.get(i).getTitle());
-                            mealIDs.add(recipes.get(i).getID());
+
+                        // Filter recipes based on user ingredients
+                        ArrayList<Recipe> matchingRecipes = new ArrayList<>();
+                        for (Recipe recipe : recipes) {
+                            api.getRecipeInformation(recipe.getID(), apiKey).enqueue(new Callback<RecipeDetail>() {
+                                @Override
+                                public void onResponse(@NonNull Call<RecipeDetail> call, @NonNull Response<RecipeDetail> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        RecipeDetail detail = response.body();
+                                        ArrayList<RecipeDetail.ExtendedIngredient> ingredients = detail.getExtendedIngredients();
+
+                                        int matchCount = 0;
+                                        ArrayList<String> missingIngredients = new ArrayList<>();
+
+                                        for (RecipeDetail.ExtendedIngredient ingredient : ingredients) {
+                                            String ingredientName = ingredient.getName().toLowerCase().trim();
+                                            boolean found = false;
+
+                                            for (String userIngredient : userIngredients) {
+                                                if (ingredientName.contains(userIngredient) || userIngredient.contains(ingredientName)) {
+                                                    found = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (found) {
+                                                matchCount++;
+                                            } else {
+                                                missingIngredients.add(ingredientName);
+                                            }
+                                        }
+
+                                        double matchRatio = (double) matchCount / ingredients.size();
+                                        Log.d("Debug", "Checking recipe: " + recipe.getTitle() + " | Match ratio: " + matchRatio);
+
+                                        if (matchRatio >= 0.8) {
+                                            matchingRecipes.add(recipe);
+                                            Log.d("Debug", "Added recipe: " + recipe.getTitle());
+
+                                            if (matchingRecipes.size() == 3) {
+                                                ArrayList<String> meals = new ArrayList<>();
+                                                ArrayList<Integer> mealIDs = new ArrayList<>();
+                                                for (Recipe r : matchingRecipes) {
+                                                    meals.add(r.getTitle());
+                                                    mealIDs.add(r.getID());
+                                                }
+
+                                                mealPlan.put(day, meals.toArray(new String[0]));
+                                                mealPlanIDs.put(day, mealIDs.stream().mapToInt(Integer::intValue).toArray());
+
+                                                if (day.equals(getTodayDayName())) {
+                                                    mealPlan.put(day, meals.toArray(new String[0]));
+                                                    mealPlanIDs.put(day, mealIDs.stream().mapToInt(Integer::intValue).toArray());
+                                                }
+                                            }
+                                        } else {
+                                            Log.d("Debug", "Skipped recipe: " + recipe.getTitle() + " | Missing: " + missingIngredients);
+                                        }
+                                    } else {
+                                        Log.d("Debug", "Response was unsuccessful or empty.");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(@NonNull Call<RecipeDetail> call, @NonNull Throwable t) {
+                                    Log.d("Debug", "Failed to get recipe details for recipe ID: " + recipe.getID());
+                                }
+
+                            });
                         }
+
+                        // Only add recipes if we got some matches
+                        ArrayList<String> meals = new ArrayList<>();
+                        ArrayList<Integer> mealIDs = new ArrayList<>();
+
+                        Collections.shuffle(matchingRecipes);
+                        for (int i = 0; i < 3 && i < matchingRecipes.size(); i++) {
+                            meals.add(matchingRecipes.get(i).getTitle());
+                            mealIDs.add(matchingRecipes.get(i).getID());
+                        }
+
                         mealPlan.put(day, meals.toArray(new String[0]));
                         mealPlanIDs.put(day, mealIDs.stream().mapToInt(Integer::intValue).toArray());
+
                         if (day.equals(getTodayDayName())) {
                             mealPlan.put(day, meals.toArray(new String[0]));
                             mealPlanIDs.put(day, mealIDs.stream().mapToInt(Integer::intValue).toArray());
-
                         }
                     } else {
-                        mealPlan.put(day, new String[]{"Error", "Error", "Error"});
+                        mealPlan.put(day, new String[]{"No match", "No match", "No match"});
                     }
                 }
             });
         }
     }
+
+
 
     /**
      * This allows you to navigate to a different month
@@ -257,8 +338,14 @@ public class CalendarFragment extends Fragment {
     private void showMealsPopup(String dayName, View view) { //https://stackoverflow.com/questions/5944987/how-to-create-a-popup-window-popupwindow-in-android
         String[] meals = mealPlan.get(dayName);
         int[] ids = mealPlanIDs.get(dayName);
-        if (meals == null) {
-            meals = new String[]{"Loading...", "Loading...", "Loading..."};
+
+        // Check if meals or ids are null or empty
+        if (meals == null || meals.length == 0) {
+            meals = new String[]{"No meals available", "No meals available", "No meals available"};
+        }
+
+        if (ids == null || ids.length < 3) {
+            ids = new int[]{-1, -1, -1};  // Default fallback to invalid IDs
         }
 
         View popupView = getLayoutInflater().inflate(R.layout.meal_plan, null);
@@ -291,6 +378,13 @@ public class CalendarFragment extends Fragment {
         //https://developer.android.com/guide/fragments/transactions
         int[] finalIds = ids;
         mealsTextView.setOnClickListener(v -> {
+            Log.d("Button Click", "Button was clicked");
+            try {
+                // Your existing logic here
+            } catch (Exception e) {
+                Log.e("Button Error", "Error on button click", e);
+            }
+
             RecipeFragment.setIDs(finalIds);
             if (getActivity() != null) {
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);

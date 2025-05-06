@@ -31,6 +31,4 @@ public interface SpoonacularApi {
             @Path("id") int id,
             @Query("apiKey") String apiKey
     );
-
-
 }

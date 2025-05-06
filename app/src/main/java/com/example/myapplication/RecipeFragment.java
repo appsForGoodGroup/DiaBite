@@ -69,7 +69,7 @@ public class RecipeFragment extends Fragment {
     }
 
     private void getRecipeDetails(int id, CallbackFunction callback) {
-        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
+        String apiKey = "1180357e69a34e54b905d57dae60db01";
         SpoonacularApi api = ApiClient.getApi();
         Call<RecipeDetail> call = api.getRecipeInformation(id, apiKey);
         call.enqueue(new Callback<RecipeDetail>() {
