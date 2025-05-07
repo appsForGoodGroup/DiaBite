@@ -22,6 +22,7 @@ import java.util.*;
 import api.ApiClient;
 import api.SpoonacularApi;
 import models.Recipe;
+import models.RecipeByIngredients;
 import models.RecipeDetail;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -106,27 +107,35 @@ public class CalendarFragment extends Fragment {
             return;
         }
 
-        String apiKey = "1180357e69a34e54b905d57dae60db01";
+        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
         SpoonacularApi api = ApiClient.getApi();
         HashSet<String> userIngredients = IngredientUtils.getUserIngredients(requireContext());
         Log.d("Debug", "User Ingredients: " + userIngredients);
 
         for (String day : days) {
-            Call<ArrayList<Recipe>> call = api.getRecipesBySugar(maxSugar, 10, apiKey);
-            call.enqueue(new Callback<ArrayList<Recipe>>() {
+            int ranking = true ? 1 : 2; // replace 'true' with a condition or just use 1 or 2 directly
+
+            Call<List<RecipeByIngredients>> call = api.getRecipesByIngredients(
+                    String.join(",", userIngredients),
+                    10, // number of recipes
+                    ranking, // 1 = maximize used ingredients, 2 = minimize missing ingredients
+                    apiKey
+            );
+
+
+
+            call.enqueue(new Callback<List<RecipeByIngredients>>() {
                 @Override
-                public void onFailure(@NonNull Call<ArrayList<Recipe>> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<List<RecipeByIngredients>> call, @NonNull Throwable t) {
                     Log.d("Debug", "Failed to get recipes");
                 }
 
-                @Override
-                public void onResponse(@NonNull Call<ArrayList<Recipe>> call, @NonNull Response<ArrayList<Recipe>> response) {
+                public void onResponse(@NonNull Call<List<RecipeByIngredients>> call, @NonNull Response<List<RecipeByIngredients>> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        ArrayList<Recipe> recipes = response.body();
+                        List<RecipeByIngredients> recipes = response.body();
 
-                        // Filter recipes based on user ingredients
-                        ArrayList<Recipe> matchingRecipes = new ArrayList<>();
-                        for (Recipe recipe : recipes) {
+                        ArrayList<RecipeByIngredients> matchingRecipes = new ArrayList<>();
+                        for (RecipeByIngredients recipe : recipes) {
                             api.getRecipeInformation(recipe.getID(), apiKey).enqueue(new Callback<RecipeDetail>() {
                                 @Override
                                 public void onResponse(@NonNull Call<RecipeDetail> call, @NonNull Response<RecipeDetail> response) {
@@ -158,14 +167,14 @@ public class CalendarFragment extends Fragment {
                                         double matchRatio = (double) matchCount / ingredients.size();
                                         Log.d("Debug", "Checking recipe: " + recipe.getTitle() + " | Match ratio: " + matchRatio);
 
-                                        if (matchRatio >= 0.8) {
+                                        if (matchRatio >= 0.5) {
                                             matchingRecipes.add(recipe);
                                             Log.d("Debug", "Added recipe: " + recipe.getTitle());
 
                                             if (matchingRecipes.size() == 3) {
                                                 ArrayList<String> meals = new ArrayList<>();
                                                 ArrayList<Integer> mealIDs = new ArrayList<>();
-                                                for (Recipe r : matchingRecipes) {
+                                                for (RecipeByIngredients r : matchingRecipes) {
                                                     meals.add(r.getTitle());
                                                     mealIDs.add(r.getID());
                                                 }
