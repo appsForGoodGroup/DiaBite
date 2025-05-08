@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +72,7 @@ public class RecipeFragment extends Fragment {
     private void getRecipeDetails(int id, CallbackFunction callback) {
         String apiKey = "0e9415e3ce654eaabbb4559411e9904c";
         SpoonacularApi api = ApiClient.getApi();
-        Call<RecipeDetail> call = api.getRecipeInformation(id, apiKey);
+        Call<RecipeDetail> call = api.getRecipeInformation(id, true,apiKey);
         call.enqueue(new Callback<RecipeDetail>() {
             @Override
             public void onFailure(@NonNull Call<RecipeDetail> call, @NonNull Throwable t) {
@@ -91,17 +92,30 @@ public class RecipeFragment extends Fragment {
                     if (call.request().url().toString().contains(String.valueOf(ids[0]))) {
                         meal1 = info;
                         if (breakfastTag != null) {
-                            breakfastTag.setText("Breakfast: " + meal1.get(0) + "\n" + meal1.get(1)+"\n"+meal1.get(2));
+                            String text = "<b>Breakfast:</b><br>" +
+                                    "<b>Title:</b> " + meal1.get(0) + "<br>" +
+                                    "<b>Ingredients:</b><br>" + meal1.get(1).replaceAll("\n", "<br>") + "<br>" +
+                                    "<b>Instructions:</b>" + meal1.get(2).replaceAll("\n", "<br>");
+                            breakfastTag.setText(Html.fromHtml(text));
+
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[1]))) {
                         meal2 = info;
                         if (lunchTag != null) {
-                            lunchTag.setText("Lunch: " + meal2.get(0) + "\n" + meal2.get(1)+"\n"+meal2.get(2));
+                            String text = "<b>Lunch:</b><br>" +
+                                    "<b>Title:</b> " + meal2.get(0) + "<br>" +
+                                    "<b>Ingredients:</b><br>" + meal2.get(1).replaceAll("\n", "<br>") + "<br>" +
+                                    "<b>Instructions:</b>" + meal2.get(2).replaceAll("\n", "<br>");
+                            lunchTag.setText(Html.fromHtml(text));
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[2]))) {
                         meal3 = info;
                         if (dinnerTag != null) {
-                            dinnerTag.setText("Dinner: " + meal3.get(0) + "\n" + meal3.get(1)+"\n"+meal3.get(2));
+                            String text = "<b>Dinner:</b><br>" +
+                                    "<b>Title:</b> " + meal3.get(0) + "<br>" +
+                                    "<b>Ingredients:</b><br>" + meal3.get(1).replaceAll("\n", "<br>") + "<br>" +
+                                    "<b>Instructions:</b>" + meal3.get(2).replaceAll("\n", "<br>");
+                            dinnerTag.setText(Html.fromHtml(text));
                         }
                     }
                 }

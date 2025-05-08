@@ -41,6 +41,8 @@ public interface SpoonacularApi {
     @GET("recipes/{id}/information")
     Call<RecipeDetail> getRecipeInformation(
             @Path("id") int id,
+            @Query("includeNutrition") boolean includeNutrition,
             @Query("apiKey") String apiKey
     );
+
 }

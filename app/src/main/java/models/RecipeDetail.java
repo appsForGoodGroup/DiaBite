@@ -11,6 +11,40 @@ public class RecipeDetail {
     @SerializedName("instructions")
     private String instructions;
 
+    @SerializedName("nutrition")
+    private Nutrition nutrition;
+
+    public Nutrition getNutrition() {
+        return nutrition;
+    }
+
+    public static class Nutrition {
+        @SerializedName("nutrients")
+        private ArrayList<Nutrient> nutrients;
+
+        public ArrayList<Nutrient> getNutrients() {
+            return nutrients;
+        }
+    }
+
+    public static class Nutrient {
+        @SerializedName("name")
+        private String name;
+
+        @SerializedName("amount")
+        private double amount;
+
+        public String getName() {
+            return name;
+        }
+
+        public double getAmount() {
+            return amount;
+        }
+    }
+
+
+
     @SerializedName("extendedIngredients")
     private ArrayList<ExtendedIngredient> extendedIngredients;
 
@@ -33,7 +67,6 @@ public class RecipeDetail {
         }
         return listOfIngredients;
     }
-
 
 
     public static class ExtendedIngredient {
