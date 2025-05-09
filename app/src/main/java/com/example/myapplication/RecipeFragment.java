@@ -92,6 +92,8 @@ public class RecipeFragment extends Fragment {
                     if (call.request().url().toString().contains(String.valueOf(ids[0]))) {
                         meal1 = info;
                         if (breakfastTag != null) {
+
+                            //https://abhiandroid.com/ui/html#gsc.tab=0
                             String text = "<b>Breakfast:</b><br>" +
                                     "<b>Title:</b> " + meal1.get(0) + "<br>" +
                                     "<b>Ingredients:</b><br>" + meal1.get(1).replaceAll("\n", "<br>") + "<br>" +

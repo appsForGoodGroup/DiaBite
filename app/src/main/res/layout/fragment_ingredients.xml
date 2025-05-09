@@ -11,11 +11,10 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/ingredients_fragment"
-        android:textSize="26sp"
+        android:text="This is your inventory! Please add ingredients."
+        android:textSize="12sp"
         android:padding="16dp" />
 
-    <!-- ListView appears below header -->
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
@@ -23,7 +22,7 @@
         android:layout_below="@id/header"
         android:layout_above="@id/fab" />
 
-    <!-- Floating Action Button -->
+<!--   https://developer.android.com/develop/ui/views/components/floating-action-button-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

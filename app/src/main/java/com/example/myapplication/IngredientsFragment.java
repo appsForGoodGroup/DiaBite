@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -30,6 +31,7 @@ public class IngredientsFragment extends Fragment {
     ArrayList<String> items;
     FloatingActionButton fab;
     ArrayAdapter<String> adapter;
+    private TextView header;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -70,6 +72,7 @@ public class IngredientsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        header = view.findViewById(R.id.header);
 
         dbHelper = new IngredientsDatabaseHelper(requireContext());
 
@@ -77,6 +80,11 @@ public class IngredientsFragment extends Fragment {
         fab = view.findViewById(R.id.fab);
 
         items = loadIngredientsFromDatabase();
+
+        if(!items.isEmpty()){
+        ViewGroup parentLayout = (ViewGroup) header.getParent();
+        parentLayout.removeView(header);
+        }
         adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, items);
         listView.setAdapter(adapter);
 
@@ -105,6 +113,8 @@ public class IngredientsFragment extends Fragment {
                 addIngredientToDatabase(newIngredient);
                 items.add(newIngredient);
                 adapter.notifyDataSetChanged();
+                ViewGroup parentLayout = (ViewGroup) header.getParent();
+                parentLayout.removeView(header);
             }
         });
 

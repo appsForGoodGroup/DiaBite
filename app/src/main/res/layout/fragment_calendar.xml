@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="DiaBite"
-        android:src="@drawable/logo"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -27,6 +26,7 @@
         android:textStyle="bold"
         android:gravity="center"/>
 
+    <!-- Month Navigation -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,6 +58,7 @@
             android:background="@null"/>
     </LinearLayout>
 
+    <!-- Days -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,6 +71,7 @@
             android:orientation="horizontal"/>
     </HorizontalScrollView>
 
+    <!-- Saved Recipes Header -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,15 +81,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"/>
 
+    <!-- Recipes List -->
     <LinearLayout
         android:id="@+id/recipesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical" />
 
-        <!-- Recipes will be added later -->
-    </LinearLayout>
-
+    <!-- Meal Popup -->
     <LinearLayout
         android:id="@+id/mealPopup"
         android:layout_width="match_parent"
@@ -121,13 +122,33 @@
             android:layout_gravity="end"/>
     </LinearLayout>
 
-    <!-- Bottom Navigation -->
+    <!-- Sugar Input and Refresh Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="24dp"
-        android:gravity="center">
+        android:gravity="center_vertical"
+        android:layout_marginTop="24dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Sugar Limit">
+
+            <EditText
+                android:id="@+id/SugarAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/Refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Refresh"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
 </LinearLayout>

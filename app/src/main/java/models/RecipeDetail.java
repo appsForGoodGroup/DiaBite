@@ -8,16 +8,23 @@ public class RecipeDetail {
     @SerializedName("title")
     private String title;
 
+    @SerializedName("id")
+    private int id;
+
+
     @SerializedName("instructions")
     private String instructions;
 
     @SerializedName("nutrition")
     private Nutrition nutrition;
 
+    public int getId() {
+        return id;
+    }
+
     public Nutrition getNutrition() {
         return nutrition;
     }
-
     public static class Nutrition {
         @SerializedName("nutrients")
         private ArrayList<Nutrient> nutrients;
