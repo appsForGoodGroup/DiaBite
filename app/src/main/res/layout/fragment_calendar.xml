@@ -71,56 +71,7 @@
             android:orientation="horizontal"/>
     </HorizontalScrollView>
 
-    <!-- Saved Recipes Header -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Saved Recipes"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
 
-    <!-- Recipes List -->
-    <LinearLayout
-        android:id="@+id/recipesContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
-
-    <!-- Meal Popup -->
-    <LinearLayout
-        android:id="@+id/mealPopup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#F5F5F5"
-        android:padding="16dp"
-        android:visibility="gone"
-        android:layout_marginTop="16dp">
-
-        <TextView
-            android:id="@+id/popupDayTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/popupMeals"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginBottom="16dp"/>
-
-        <Button
-            android:id="@+id/closePopupButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Close"
-            android:layout_gravity="end"/>
-    </LinearLayout>
 
     <!-- Sugar Input and Refresh Button -->
     <LinearLayout
@@ -134,7 +85,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:hint="Sugar Limit">
+            android:hint="Sugar per meal (in grams)">
 
             <EditText
                 android:id="@+id/SugarAmount"

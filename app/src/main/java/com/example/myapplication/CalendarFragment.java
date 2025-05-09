@@ -35,8 +35,6 @@ public class CalendarFragment extends Fragment {
 
     private TextView tvMonthYear;
     private LinearLayout daysContainer;
-    private LinearLayout recipesContainer;
-    private LinearLayout mealPopup;
 
     private EditText sugarInput;
     private Button refresh;
@@ -61,10 +59,6 @@ public class CalendarFragment extends Fragment {
         sugarInput = view.findViewById(R.id.SugarAmount);
         refresh = view.findViewById(R.id.Refresh);
 
-        mealPopup = view.findViewById(R.id.mealPopup);
-        Button closePopupButton = view.findViewById(R.id.closePopupButton);
-        Button btnPrevMonth = view.findViewById(R.id.btnPrevMonth);
-        Button btnNextMonth = view.findViewById(R.id.btnNextMonth);
 
         // Initialize calendar
         currentCalendar = Calendar.getInstance();
@@ -76,9 +70,6 @@ public class CalendarFragment extends Fragment {
         updateMonthYear();
         setupDaysOfWeek();
 
-        btnPrevMonth.setOnClickListener(v -> navigateMonth(-1));
-        btnNextMonth.setOnClickListener(v -> navigateMonth(1));
-        closePopupButton.setOnClickListener(v -> mealPopup.setVisibility(View.GONE));
 
         return view;
     }
@@ -122,7 +113,7 @@ public class CalendarFragment extends Fragment {
             return;
         }
 
-        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
+        String apiKey = "1180357e69a34e54b905d57dae60db01";
         SpoonacularApi api = ApiClient.getApi();
         HashSet<String> userIngredients = IngredientUtils.getUserIngredients(requireContext());
 

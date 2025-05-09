@@ -113,8 +113,10 @@ public class IngredientsFragment extends Fragment {
                 addIngredientToDatabase(newIngredient);
                 items.add(newIngredient);
                 adapter.notifyDataSetChanged();
-                ViewGroup parentLayout = (ViewGroup) header.getParent();
-                parentLayout.removeView(header);
+                if (header.getParent() != null) {
+                    ViewGroup parentLayout = (ViewGroup) header.getParent();
+                    parentLayout.removeView(header);
+                }
             }
         });
 
