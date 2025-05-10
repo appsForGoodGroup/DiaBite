@@ -16,11 +16,19 @@ public class Recipe {
     @SerializedName("ingredients")
     private String ingredients;
 
-    
 
+    /**
+     * This method gives the title
+     * @return this method returns the title of the recipe
+     */
     public String getTitle() {
         return title;
     }
+
+    /**
+     * This returns the id of the recipe
+     * @return the id of the recipe
+     */
     public int getID() {
         return id;
     }

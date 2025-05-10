@@ -7,7 +7,15 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+/**
+ * This class allows us to receive ingredient information
+ */
 public class IngredientUtils {
+    /**
+     * This returns the ingredients in the user's storage
+     * @param context where the data is required
+     * @return a list of ingredients
+     */
     public static HashSet<String> getUserIngredients(Context context) {
         IngredientsDatabaseHelper dbHelper = new IngredientsDatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();

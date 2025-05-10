@@ -7,6 +7,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
     private static Retrofit retrofit = null;
 
+    /**
+     * This allows us to access the API
+     * @return an instance of spoonacular api that can be used to send requests
+     */
     public static SpoonacularApi getApi() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()

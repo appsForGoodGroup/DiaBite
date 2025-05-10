@@ -70,6 +70,11 @@ public class RecipeFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * This was made with the same resources as the method in Calendar Fragment
+     * @param id the id of the meal
+     * @param callback A function to be called with the recipe details once they're available.
+     */
     private void getRecipeDetails(int id, CallbackFunction callback) {
         String apiKey = "0e9415e3ce654eaabbb4559411e9904c";
         SpoonacularApi api = ApiClient.getApi();
@@ -160,6 +165,10 @@ public class RecipeFragment extends Fragment {
         return view;
     }
 
+    /**
+     * This sets the ids of the meals that have been fetched by the calendar fragment
+     * @param iDsOfMeals these are the IDs of the meals, retrieved from the calendar fragment
+     */
     public static void setIDs(int[] iDsOfMeals){
         ids = iDsOfMeals;
     }

@@ -101,6 +101,9 @@ public class IngredientsFragment extends Fragment {
         });
     }
 
+    /**
+     * This builds a pop up that asks for an ingredients
+     */
     private void showAddIngredientPopUp() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Add Ingredient");
@@ -127,6 +130,10 @@ public class IngredientsFragment extends Fragment {
         builder.show();
     }
 
+    /**
+     * This adds an ingredient to the database
+     * @param ingredient the ingredient that was added from the pop up
+     */
     public void addIngredientToDatabase(String ingredient){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -135,12 +142,20 @@ public class IngredientsFragment extends Fragment {
         db.close();
     }
 
+    /**
+     * This removes the ingredient from the database
+     * @param ingredient the ingredient that will be removed from the database
+     */
     public void removeIngredientFromDatabase(String ingredient){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(IngredientsDatabaseHelper.TABLE_INGREDIENTS, "name = ?", new String[]{ingredient});
         db.close();
     }
 
+    /**
+     * This will load all the ingredients that a user has into an arraylist
+     * @return an arraylist full of the ingredients the user has in their inventory
+     */
     private ArrayList<String> loadIngredientsFromDatabase() {
         ArrayList<String> ingredients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();

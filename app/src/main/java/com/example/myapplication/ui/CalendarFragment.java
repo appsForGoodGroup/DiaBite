@@ -31,7 +31,9 @@ import com.example.myapplication.IngredientUtils;
 import com.example.myapplication.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-
+/**
+ * This class controls the Calendar fragment portion of our application, it generates meals for the week.
+ */
 public class CalendarFragment extends Fragment {
 
     private TextView tvMonthYear;
@@ -48,7 +50,6 @@ public class CalendarFragment extends Fragment {
     public CalendarFragment(){
 
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
@@ -75,6 +76,10 @@ public class CalendarFragment extends Fragment {
         return view;
     }
 
+    /**
+     * This can use the calendar to return the day it is today.
+     * @return The day it is today
+     */
     private String getTodayDayName() {
         Calendar today = Calendar.getInstance();
         int dayOfWeek = today.get(Calendar.DAY_OF_WEEK); // 1 (Sun) to 7 (Sat)
@@ -97,8 +102,9 @@ public class CalendarFragment extends Fragment {
 
 
     /**
-     * This requests a recipe from spoonacular using a maximum sugar.
+     * This requests a recipe from spoonacular using a maximum sugar and the meals in the user's inventory.
      * @param maxSugar The maximum sugar a person wants in their meal
+     * @param refresh This boolean will be used to know if the meal plan needs to be refreshed
      * This was made using many resources and troubleshooting
      *                 https://spoonacular.com/food-api/docs#Get-Ingredient-Information
      *                 Chat GPT
@@ -202,7 +208,10 @@ public class CalendarFragment extends Fragment {
         });
     }
 
-
+    /**
+     * Now that we have the recipes, we can assign them in each day
+     * @param validRecipes The list of recipes that match the requirements
+     */
     private void assignRecipesToDays(List<RecipeDetail> validRecipes) {
         Collections.shuffle(validRecipes);
         int index = 0;
@@ -229,24 +238,6 @@ public class CalendarFragment extends Fragment {
                 RecipeFragment.setIDs(mealPlanIDs.get(day)); //sets the recipe page to be on today by default
             }
         }
-    }
-
-
-    /**
-     * This allows you to navigate to a different month
-     * @param months the month that will be navigated to
-     */
-    private void navigateMonth(int months) {
-        currentCalendar.add(Calendar.MONTH, months);
-        updateCalendar();
-    }
-
-    /**
-     * This updates the month and the week
-     */
-    private void updateCalendar() {
-        updateMonthYear();
-        setupDaysOfWeek();
     }
 
     /**
@@ -314,7 +305,7 @@ public class CalendarFragment extends Fragment {
     }
 
     /**
-     * This makes a meals pop up with 3 meals per day
+     * This makes a meals pop up with 3 meals per day, clicking it will take you to the recipe's page
      * @param dayName this takes in the name of the day the user clicked on
      * @param view this is the view that triggered the pop up
      */
@@ -361,13 +352,6 @@ public class CalendarFragment extends Fragment {
         //https://developer.android.com/guide/fragments/transactions
         int[] finalIds = ids;
         mealsTextView.setOnClickListener(v -> {
-            Log.d("Button Click", "Button was clicked");
-            try {
-                // Your existing logic here
-            } catch (Exception e) {
-                Log.e("Button Error", "Error on button click", e);
-            }
-
             RecipeFragment.setIDs(finalIds);
             if (getActivity() != null) {
                 BottomNavigationView navBar = getActivity().findViewById(R.id.bottomNavigationView);
