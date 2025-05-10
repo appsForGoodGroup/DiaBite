@@ -1,7 +1,5 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -28,6 +26,9 @@ import models.RecipeDetail;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import com.example.myapplication.IngredientUtils;
+import com.example.myapplication.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 

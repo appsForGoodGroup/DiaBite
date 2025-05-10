@@ -1,16 +1,15 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.example.myapplication.CalendarFragment;
-import com.example.myapplication.IngredientsFragment;
-import com.example.myapplication.RecipeFragment;
+
+import com.example.myapplication.ui.CalendarFragment;
+import com.example.myapplication.ui.IngredientsFragment;
+import com.example.myapplication.ui.RecipeFragment;
 
 
 import com.example.myapplication.databinding.ActivityMainBinding;

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.myapplication.IngredientsDatabaseHelper;
+import com.example.myapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

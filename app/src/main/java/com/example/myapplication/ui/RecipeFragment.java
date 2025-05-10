@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
 import android.os.Bundle;
 
@@ -13,12 +13,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import java.lang.reflect.Array;
+import com.example.myapplication.CallbackFunction;
+import com.example.myapplication.R;
+
 import java.util.ArrayList;
 
 import api.ApiClient;
 import api.SpoonacularApi;
-import models.Recipe;
 import models.RecipeDetail;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -98,7 +99,7 @@ public class RecipeFragment extends Fragment {
                                     "<b>Title:</b> " + meal1.get(0) + "<br>" +
                                     "<b>Ingredients:</b><br>" + meal1.get(1).replaceAll("\n", "<br>") + "<br>" +
                                     "<b>Instructions:</b>" + meal1.get(2).replaceAll("\n", "<br>");
-                            breakfastTag.setText(Html.fromHtml(text));
+                            lunchTag.setText(Html.fromHtml(text));
 
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[1]))) {

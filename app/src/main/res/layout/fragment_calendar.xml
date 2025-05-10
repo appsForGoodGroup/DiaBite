@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="#FFFFFF"
-    tools:context=".CalendarFragment">
+    tools:context=".ui.CalendarFragment">
 
     <!-- App Header -->
     <TextView
