@@ -104,7 +104,7 @@ public class RecipeFragment extends Fragment {
                                     "<b>Title:</b> " + meal1.get(0) + "<br>" +
                                     "<b>Ingredients:</b><br>" + meal1.get(1).replaceAll("\n", "<br>") + "<br>" +
                                     "<b>Instructions:</b>" + meal1.get(2).replaceAll("\n", "<br>");
-                            lunchTag.setText(Html.fromHtml(text));
+                            breakfastTag.setText(Html.fromHtml(text));
 
                         }
                     } else if (call.request().url().toString().contains(String.valueOf(ids[1]))) {
