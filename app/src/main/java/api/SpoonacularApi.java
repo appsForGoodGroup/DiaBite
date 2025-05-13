@@ -11,7 +11,7 @@ import models.RecipeByIngredients;
 import java.util.ArrayList;
 import java.util.List;
 
-// We used this website to guide us: https://reintech.io/blog/building-recipe-app-android-spoonacular-api
+// We used this website to guide us: https://reintech.io/blog/building-recipe-app-android-spoonacular-api. This class allows us to reach certain API endpoints using Spoonacular
 public interface SpoonacularApi {
 
     /**

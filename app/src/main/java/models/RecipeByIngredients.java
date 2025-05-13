@@ -1,5 +1,7 @@
 package models;
 
+
+//This is a model that we used to obtain information about a recipe from Spoonacular
 public class RecipeByIngredients {
     private int id;
     private String title;

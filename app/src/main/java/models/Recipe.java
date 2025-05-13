@@ -3,6 +3,7 @@ package models;
 import com.google.gson.annotations.SerializedName;
 
 //We used this website to guide us: https://reintech.io/blog/building-recipe-app-android-spoonacular-api
+//This is a model that we used to obtain information about a recipe from Spoonacular
 public class Recipe {
     @SerializedName("id")
     private int id;

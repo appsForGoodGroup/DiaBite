@@ -71,7 +71,7 @@ public class RecipeFragment extends Fragment {
     }
 
     /**
-     * This was made with the same resources as the method in Calendar Fragment
+     * This was made with the same resources as the method in Calendar Fragment. It uses the api from Spoonacular to look up IDs of recipes and generate the instructions and ingredients.
      * @param id the id of the meal
      * @param callback A function to be called with the recipe details once they're available.
      */

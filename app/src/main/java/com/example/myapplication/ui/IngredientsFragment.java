@@ -26,6 +26,7 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  * Use the {@link IngredientsFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * This will display the ingredients and allow a user to add and remove ingredients to their inventories.
  */
 public class IngredientsFragment extends Fragment {
 

@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 //We used this website to guide us: https://reintech.io/blog/building-recipe-app-android-spoonacular-api
+//This is a model that we used to obtain information about a recipe from Spoonacular
 public class RecipeDetail {
     @SerializedName("title")
     private String title;

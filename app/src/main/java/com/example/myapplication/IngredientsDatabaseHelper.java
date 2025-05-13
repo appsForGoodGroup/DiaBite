@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * This calss allows us to utilize the SQLite database.
+ */
 public class IngredientsDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ingredients.db";

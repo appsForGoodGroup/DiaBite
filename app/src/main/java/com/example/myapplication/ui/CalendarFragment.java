@@ -66,7 +66,7 @@ public class CalendarFragment extends Fragment {
         currentCalendar = Calendar.getInstance();
 
         // Initialize data
-        getRecipeFromSpoonacular(45, false); //this will get recipes using a max sugar, currently it's 45
+        getRecipeFromSpoonacular(25, false); //this will get recipes using a max sugar, currently it's 25
 
         // Setup UI
         updateMonthYear();
@@ -120,7 +120,7 @@ public class CalendarFragment extends Fragment {
             return;
         }
 
-        String apiKey = "1180357e69a34e54b905d57dae60db01";
+        String apiKey = "b5a159e87f9e4cf991343818c1ccf6a8";
         SpoonacularApi api = ApiClient.getApi();
         HashSet<String> userIngredients = IngredientUtils.getUserIngredients(requireContext());
 

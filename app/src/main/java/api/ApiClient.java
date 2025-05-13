@@ -3,7 +3,7 @@ package api;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-// We used this resource https://reintech.io/blog/building-recipe-app-android-spoonacular-api, and made some modifications
+// We used this resource https://reintech.io/blog/building-recipe-app-android-spoonacular-api, and made some modifications. This class allows us to interact with the Spoonacular API.
 public class ApiClient {
     private static Retrofit retrofit = null;
 
